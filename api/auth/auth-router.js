@@ -10,17 +10,21 @@ const {
 } = require("../middleware/restricted");
 const { JWT_SECRET, BCRYPT_ROUNDS } = require("../secrets");
 
-router.post("/register", [validateBody, checkUsernameExistis], (req, res) => {
-  let user = req.body;
-  const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
-  user.password = hash;
-  const { username, password } = user;
-  Auth.add({ username, password })
-    .then((saved) => {
-      res.status(201).json(saved);
-    })
-    .catch(next);
-  /*
+router.post(
+  "/register",
+  [validateBody, checkUsernameExistis],
+  async (req, res, next) => {
+    try {
+      let user = req.body;
+      const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
+      user.password = hash;
+      const { username, password } = user;
+      const newUser = await Auth.add({ username, password });
+      res.status(201).json(newUser);
+    } catch (err) {
+      next(err);
+    }
+    /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
     DO NOT EXCEED 2^8 ROUNDS OF HASHING!
@@ -45,7 +49,8 @@ router.post("/register", [validateBody, checkUsernameExistis], (req, res) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-});
+  }
+);
 
 router.post("/login", (req, res) => {
   res.end("implement login, please!");
@@ -72,6 +77,14 @@ router.post("/login", (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
+});
+
+router.use((err, req, res, next) => {
+  // eslint-disable-line
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+  });
 });
 
 module.exports = router;

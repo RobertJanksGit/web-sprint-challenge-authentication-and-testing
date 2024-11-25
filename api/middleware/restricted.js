@@ -28,11 +28,15 @@ function validateBody(req, res, next) {
 
 async function checkUsernameExistis(req, res, next) {
   const { username } = req.body;
-  const usernmaeExist = await findBy({ username });
-  if (usernmaeExist) {
-    next();
-  } else {
-    next({ status: 401, message: "username taken" });
+  try {
+    const usernameExist = await findBy({ username });
+    if (!usernameExist) {
+      next();
+    } else {
+      next({ status: 401, message: "username taken" });
+    }
+  } catch (err) {
+    next({ status: 500, message: "server error while checking username" });
   }
 }
 module.exports = { validateBody, checkUsernameExistis };
