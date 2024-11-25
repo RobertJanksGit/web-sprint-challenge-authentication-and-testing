@@ -62,9 +62,7 @@ router.post("/login", validateBody, async (req, res, next) => {
         JWT_SECRET,
         { expiresIn: "1d" }
       );
-      res
-        .status(200)
-        .json({ message: `welcome, ${user.username}`, Token: token });
+      res.status(200).json({ message: `welcome, ${user.username}`, token });
     } else {
       next({ status: 401, message: "invalid credentials" });
     }
