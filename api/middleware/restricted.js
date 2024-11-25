@@ -4,7 +4,12 @@ const { findBy } = require("../auth/auth-model");
 
 function restricted(req, res, next) {
   let token = req.headers.authorization;
+  console.log(token);
   if (token) {
+    if (token.startsWith("Bearer ")) {
+      token = token.slice(7);
+    }
+
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {
         next({ status: 401, message: "token invalid" });
