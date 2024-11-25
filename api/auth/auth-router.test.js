@@ -33,3 +33,17 @@ describe("[POST] /register", () => {
     expect(res.body.username).toEqual(newUser3.username);
   });
 });
+describe("[POST] /login", () => {
+  const user = {
+    username: "Captain Marvel",
+    password: "foobar",
+  };
+  test("responds with token in res.body", async () => {
+    const res = await request(server).post("/api/auth/login").send(user);
+    expect(res.body).toHaveProperty("Token");
+  });
+  test("res.body contains welcome message", async () => {
+    const res = await request(server).post("/api/auth/login").send(user);
+    expect(res.body.message).toEqual("welcome, Captain Marvel");
+  });
+});
