@@ -5,8 +5,9 @@
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",
+    "rollback": "knex migrate:rollback",
     "migrate": "knex migrate:latest",
-    "test": "cross-env NODE_ENV=testing jest --verbose --runInBand --silent"
+    "test": "cross-env NODE_ENV=testing jest --verbose --watchAll -runInBand"
   },
   "repository": {
     "type": "git",
@@ -14,6 +15,8 @@
   },
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "cors": "2.8.5",
     "express": "4.18.1",
     "helmet": "5.0.2",
